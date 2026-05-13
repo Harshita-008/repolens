@@ -29,9 +29,9 @@ export interface AnalysisInput {
   tree: string;
   files: RepoFile[];
   importantFiles: RepoFile[];
-  structure: any;
-  architecture: any;
-  dependencies: any;
+  structure: unknown;
+  architecture: unknown;
+  dependencies: unknown;
 }
 
 export async function generateRepoSummary(
@@ -100,11 +100,10 @@ SPACING RULES:
 
   const completion =
     await openrouter.chat.completions.create({
-      model:
-        "openai/gpt-oss-20b:free",
+        model:
+          "openai/gpt-oss-20b:free",
         temperature: 0.3,
         max_tokens: 400,
-        timeout: 20000,
 
       messages: [
         {
@@ -116,6 +115,8 @@ SPACING RULES:
           content: prompt,
         },
       ]
+    }, {
+      timeout: 20000,
     });
 
   return (
@@ -169,11 +170,10 @@ SPACING RULES:
 `;
   const completion =
     await openrouter.chat.completions.create({
-      model:
-        "openai/gpt-oss-20b:free",
+        model:
+          "openai/gpt-oss-20b:free",
         temperature: 0.3,
         max_tokens: 400,
-        timeout: 20000,
 
       messages: [
         {
@@ -185,6 +185,8 @@ SPACING RULES:
           content: prompt,
         },
       ]
+    }, {
+      timeout: 20000,
     });
 
   return (
@@ -279,11 +281,10 @@ SPACING RULES:
 
   const completion =
     await openrouter.chat.completions.create({
-      model:
-        "openai/gpt-oss-20b:free",
+        model:
+          "openai/gpt-oss-20b:free",
         temperature: 0.3,
         max_tokens: 500,
-        timeout: 20000,
 
       messages: [
         {
@@ -295,6 +296,8 @@ SPACING RULES:
           content: prompt,
         },
       ]
+    }, {
+      timeout: 20000,
     });
 
   return (

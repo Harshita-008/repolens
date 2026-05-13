@@ -1,36 +1,58 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# RepoLens
+
+RepoLens is an AI-powered repository intelligence tool for onboarding into unfamiliar codebases. Paste a GitHub repository URL and it generates an architecture map, onboarding roadmap, cited repo chat, health report, and PR/diff impact analysis.
+
+## Features
+
+- Persistent repo dashboard for reopening recent analyses
+- AI repository summary, read-first guide, and learning roadmap
+- Interactive architecture graph with module and file details
+- Chat with repository context, source citations, and code snippets
+- Generic repository health report for docs, tests, CI, config, and risk signals
+- PR/diff impact analyzer with affected modules, review focus, and test suggestions
+- File explorer with syntax highlighting for important files
 
 ## Getting Started
 
-First, run the development server:
+Install dependencies:
+
+```bash
+npm install
+```
+
+Create local environment variables:
+
+```bash
+cp .env.example .env.local
+```
+
+Fill in:
+
+```bash
+GEMINI_API_KEY=...
+OPENROUTER_API_KEY=...
+```
+
+Run the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open `http://localhost:3000`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Useful Scripts
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run dev
+npm run lint
+npm run build
+```
 
-## Learn More
+## Architecture
 
-To learn more about Next.js, take a look at the following resources:
+See [docs/architecture.md](docs/architecture.md) for the system flow and module boundaries.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Local Data
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+RepoLens saves local analysis history in `.repolens/`, which is ignored by git. Cloned repositories are stored in the operating system temp directory so large analyzed repos do not slow down Next.js builds.

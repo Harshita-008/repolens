@@ -1,14 +1,22 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import ArchitectureGraph from "@/components/repo/ArchitectureGraph";
 import RepoChat from "@/components/chat/RepoChat";
 import FilePreview from "@/components/repo/FilePreview";
+import AnalysisProgress from "@/components/dashboard/AnalysisProgress";
+import RepoDashboard from "@/components/dashboard/RepoDashboard";
+import RepoHealthReport from "@/components/health/RepoHealthReport";
+import PrImpactAnalyzer from "@/components/impact/PrImpactAnalyzer";
 import { TypeAnimation } from "react-type-animation";
 import Sidebar from "@/components/layout/Sidebar";
 import DependencyHeatmap from "@/components/DependencyHeatmap";
 import MarkdownRenderer from "@/components/MarkdownRenderer";
+import type {
+  AnalysisListItem,
+  RepoHealthReport as HealthReport,
+} from "@/lib/repositories/types";
 import type {
   GraphEdge,
   GraphNode,
@@ -23,6 +31,8 @@ import {
 
 interface AnalysisData {
   repoName: string;
+  repoUrl?: string;
+  analyzedAt?: string;
   totalFiles: number;
   tree: string;
   graph: {
@@ -40,6 +50,7 @@ interface AnalysisData {
     path: string;
     content: string;
   }[];
+  health: HealthReport;
 }
 
 const proseStyles = `
@@ -81,10 +92,28 @@ const proseStyles = `
 export default function HomePage() {
   const [repoUrl, setRepoUrl] = useState("");
   const [loading, setLoading] = useState(false);
+  const [loadingRepoName, setLoadingRepoName] =
+    useState("");
   const [data, setData] =
     useState<AnalysisData | null>(null);
+  const [savedRepos, setSavedRepos] = useState<
+    AnalysisListItem[]
+  >([]);
   const [selectedFilePath, setSelectedFilePath] =
     useState<string>("");
+
+  useEffect(() => {
+    loadSavedRepos();
+  }, []);
+
+  async function loadSavedRepos() {
+    try {
+      const response = await axios.get("/api/repos");
+      setSavedRepos(response.data.repos || []);
+    } catch (error) {
+      console.error(error);
+    }
+  }
 
   function openFile(path: string) {
     setSelectedFilePath(path);
@@ -134,10 +163,31 @@ export default function HomePage() {
         "repoRoadmap",
         response.data.roadmap
       );
+
+      await loadSavedRepos();
     } catch (error) {
       console.error(error);
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function openSavedRepo(repoName: string) {
+    try {
+      setLoadingRepoName(repoName);
+
+      const response = await axios.get(
+        `/api/repos/${encodeURIComponent(repoName)}`
+      );
+
+      setData(response.data);
+      setSelectedFilePath(
+        response.data.importantFiles?.[0]?.path || ""
+      );
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoadingRepoName("");
     }
   }
 
@@ -205,6 +255,17 @@ export default function HomePage() {
               "Analyze Repo"
             )}
           </button>
+        </div>
+
+        <AnalysisProgress active={loading} />
+
+        <div className="mb-10">
+          <RepoDashboard
+            repos={savedRepos}
+            activeRepoName={data?.repoName}
+            loadingRepoName={loadingRepoName}
+            onOpenRepo={openSavedRepo}
+          />
         </div>
 
         <div className="grid grid-cols-4 gap-4 mb-10">
@@ -311,6 +372,10 @@ export default function HomePage() {
                 data={data.heatmap}
               />
             </section>
+
+            <RepoHealthReport report={data.health} />
+
+            <PrImpactAnalyzer repoName={data.repoName} />
 
             <section id="chat">
               <RepoChat

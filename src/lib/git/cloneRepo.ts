@@ -1,6 +1,7 @@
 import simpleGit from "simple-git";
 import path from "path";
 import fs from "fs";
+import os from "os";
 
 const git = simpleGit();
 
@@ -17,11 +18,14 @@ export async function cloneRepo(repoUrl: string) {
 
     const uniqueRepoName = `${repoName}-${Date.now()}`;
 
-    const repoPath = path.join(
-      process.cwd(),
-      "repos",
-      uniqueRepoName
+    const reposRoot = path.join(
+      os.tmpdir(),
+      "repolens",
+      "repos"
     );
+    const repoPath = path.join(reposRoot, uniqueRepoName);
+
+    fs.mkdirSync(reposRoot, { recursive: true });
 
     await git.clone(repoUrl, repoPath);
 

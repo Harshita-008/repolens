@@ -47,3 +47,7 @@ export function saveRepoContext(input: {
 export function getRepoContext(repoName: string) {
   return getStore().get(repoName);
 }
+
+export function hasRepoContext(repoName: string) {
+  return getStore().has(repoName);
+}

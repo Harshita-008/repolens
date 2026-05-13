@@ -11,6 +11,8 @@ import {
   Map,
   Network,
   Files,
+  ShieldCheck,
+  GitPullRequest,
 } from "lucide-react";
 
 const items = [
@@ -18,6 +20,11 @@ const items = [
     icon: LayoutDashboard,
     label: "Overview",
     id: "top",
+  },
+  {
+    icon: Brain,
+    label: "Dashboard",
+    id: "dashboard",
   },
   {
     icon: Brain,
@@ -43,6 +50,16 @@ const items = [
     icon: Network,
     label: "Heatmap",
     id: "heatmap",
+  },
+  {
+    icon: ShieldCheck,
+    label: "Health",
+    id: "health",
+  },
+  {
+    icon: GitPullRequest,
+    label: "PR Impact",
+    id: "impact",
   },
   {
     icon: MessageSquare,

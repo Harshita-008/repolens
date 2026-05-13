@@ -1,9 +1,13 @@
 import { NextRequest, NextResponse } from "next/server";
 import { buildChatPrompt } from "@/lib/chat/buildChatPrompt";
 import { generateChatAnswer } from "@/lib/chat/generateChatAnswer";
-import { getRepoContext } from "@/lib/chat/repoContextStore";
+import {
+  getRepoContext,
+  saveRepoContext,
+} from "@/lib/chat/repoContextStore";
 import { retrieveRepoContext } from "@/lib/chat/retrieveRepoContext";
 import { ChatMessage } from "@/lib/chat/types";
+import { getAnalysis } from "@/lib/repositories/repoAnalysisStore";
 
 export async function POST(req: NextRequest) {
   try {
@@ -44,7 +48,23 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const context = getRepoContext(repoName);
+    let context = getRepoContext(repoName);
+
+    if (!context) {
+      const analysis = getAnalysis(repoName);
+
+      if (analysis) {
+        saveRepoContext({
+          repoName: analysis.repoName,
+          tree: analysis.tree,
+          summary: analysis.summary,
+          roadmap: analysis.roadmap,
+          files: analysis.contextFiles,
+        });
+
+        context = getRepoContext(repoName);
+      }
+    }
 
     if (!context) {
       return NextResponse.json(
@@ -74,6 +94,7 @@ export async function POST(req: NextRequest) {
         path: chunk.path,
         startLine: chunk.startLine,
         endLine: chunk.endLine,
+        snippet: chunk.content.slice(0, 900),
       })),
     });
   } catch (error) {

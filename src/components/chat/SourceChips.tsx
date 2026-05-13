@@ -4,6 +4,7 @@ export interface ChatSource {
   path: string;
   startLine: number;
   endLine: number;
+  snippet?: string;
 }
 
 interface Props {

@@ -9,6 +9,8 @@ import { analyzeStructure } from "@/lib/parser/analyzeStructure";
 import { findImportantFiles } from "@/lib/parser/findImportantFiles";
 import { detectTechStack } from "../../../lib/parser/detectTechStack";
 import { saveRepoContext } from "@/lib/chat/repoContextStore";
+import { analyzeRepoHealth } from "@/lib/health/analyzeRepoHealth";
+import { saveAnalysis } from "@/lib/repositories/repoAnalysisStore";
 
 import {
   generateRepoSummary,
@@ -63,6 +65,8 @@ export async function POST(req: NextRequest) {
       generateRoadmap(analysisInput),
     ]);
 
+    const health = analyzeRepoHealth(files);
+
     saveRepoContext({
       repoName,
       tree,
@@ -71,9 +75,10 @@ export async function POST(req: NextRequest) {
       files,
     });
 
-    return NextResponse.json({
-      success: true,
+    const analysis = saveAnalysis({
       repoName,
+      repoUrl,
+      analyzedAt: new Date().toISOString(),
       totalFiles: files.length,
       tree,
       graph,
@@ -81,7 +86,14 @@ export async function POST(req: NextRequest) {
       readFirst,
       roadmap,
       heatmap,
+      contextFiles: files,
       importantFiles,
+      health,
+    });
+
+    return NextResponse.json({
+      success: true,
+      ...analysis,
     });
   } catch (error) {
     console.error(error);

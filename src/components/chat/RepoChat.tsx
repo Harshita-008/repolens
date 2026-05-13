@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import ChatMarkdown from "./ChatMarkdown";
 import SourceChips, { ChatSource } from "./SourceChips";
+import SourceSnippetPanel from "./SourceSnippetPanel";
 import SuggestedQuestions from "./SuggestedQuestions";
 
 interface Props {
@@ -148,6 +149,10 @@ export default function RepoChat({
                 <>
                   <ChatMarkdown content={message.content} />
                   <SourceChips
+                    sources={message.sources}
+                    onOpenFile={onOpenFile}
+                  />
+                  <SourceSnippetPanel
                     sources={message.sources}
                     onOpenFile={onOpenFile}
                   />
