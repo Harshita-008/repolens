@@ -73,6 +73,11 @@ export default function HomePage() {
       setData(response.data);
 
       localStorage.setItem(
+        "repoName",
+        response.data.repoName
+      );
+
+      localStorage.setItem(
         "repoTree",
         response.data.tree
       );
@@ -264,7 +269,9 @@ export default function HomePage() {
             </section>
 
             <section id="chat">
-              <RepoChat />
+              <RepoChat
+                repoName={data.repoName}
+              />
             </section>
 
             <section id="files">

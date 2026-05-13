@@ -2,13 +2,13 @@ import { NextRequest, NextResponse } from "next/server";
 import { cloneRepo } from "@/lib/git/cloneRepo";
 import { scanRepoFiles } from "@/lib/git/fileScanner";
 import { generateRepoTree } from "@/lib/git/repoTree";
-import { storeRepoEmbeddings } from "@/lib/vector/storeEmbeddings";
 import { generateDependencyHeatmap } from "@/lib/parser/dependencyHeatmap";
 import { generateGraph } from "@/lib/parser/generateGraph";
 import { detectArchitecture } from "@/lib/parser/detectArchitecture";
 import { analyzeStructure } from "@/lib/parser/analyzeStructure";
 import { findImportantFiles } from "@/lib/parser/findImportantFiles";
 import { detectTechStack } from "../../../lib/parser/detectTechStack";
+import { saveRepoContext } from "@/lib/chat/repoContextStore";
 
 import {
   generateRepoSummary,
@@ -62,6 +62,14 @@ export async function POST(req: NextRequest) {
       generateReadFirst(analysisInput),
       generateRoadmap(analysisInput),
     ]);
+
+    saveRepoContext({
+      repoName,
+      tree,
+      summary,
+      roadmap,
+      files,
+    });
 
     return NextResponse.json({
       success: true,
