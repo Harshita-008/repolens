@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   LayoutDashboard,
   Brain,
@@ -63,6 +63,60 @@ const items = [
 
 export default function Sidebar() {
   const [active, setActive] = useState("top");
+
+  useEffect(() => {
+    const sectionIds = items
+      .map((item) => item.id)
+      .filter((id) => id !== "top");
+
+    function updateActiveSection() {
+      if (window.scrollY < 180) {
+        setActive("top");
+        return;
+      }
+
+      const anchorY = window.innerHeight * 0.35;
+      let currentSection = sectionIds[0];
+
+      for (const id of sectionIds) {
+        const element = document.getElementById(id);
+
+        if (!element) continue;
+
+        const rect =
+          element.getBoundingClientRect();
+
+        if (rect.top <= anchorY) {
+          currentSection = id;
+        }
+      }
+
+      setActive(currentSection);
+    }
+
+    window.addEventListener(
+      "scroll",
+      updateActiveSection,
+      { passive: true }
+    );
+    window.addEventListener(
+      "resize",
+      updateActiveSection
+    );
+
+    updateActiveSection();
+
+    return () => {
+      window.removeEventListener(
+        "scroll",
+        updateActiveSection
+      );
+      window.removeEventListener(
+        "resize",
+        updateActiveSection
+      );
+    };
+  }, []);
 
   return (
     <aside className="fixed left-0 top-0 h-screen w-[260px] border-r border-zinc-800 bg-black/60 backdrop-blur-2xl p-6">
