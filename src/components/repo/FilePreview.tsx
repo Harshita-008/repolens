@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import SyntaxHighlighter from "react-syntax-highlighter";
 import { atomDark } from "react-syntax-highlighter/dist/cjs/styles/prism";
-import { Search } from "lucide-react";
+import { Copy, FileCode2, Search } from "lucide-react";
 import { detectLanguage } from "../../lib/files/detectLanguage";
 
 interface RepoFile {
@@ -50,27 +50,32 @@ export default function FilePreview({
   }
 
   return (
-    <div className="bg-zinc-900/80 backdrop-blur-xl rounded-2xl p-6 border border-zinc-800 hover:border-zinc-700 transition-all duration-300">
-      <div className="mb-6 flex items-start justify-between gap-4">
-        <div>
-          <h2 className="text-2xl font-semibold">
-            Explore Important Files
-          </h2>
-          <p className="mt-1 text-sm text-zinc-400">
-            Browse key files with syntax highlighting and line numbers.
-          </p>
+    <div className="rounded-xl border border-zinc-800 bg-zinc-950/70">
+      <div className="flex items-start justify-between gap-4 border-b border-zinc-800 px-5 py-4">
+        <div className="flex items-start gap-3">
+          <div className="grid h-9 w-9 place-items-center rounded-lg border border-zinc-800 bg-black text-cyan-300">
+            <FileCode2 size={17} />
+          </div>
+          <div>
+            <h2 className="text-lg font-semibold">
+              Explore Important Files
+            </h2>
+            <p className="mt-1 text-sm text-zinc-400">
+              Browse key files with syntax highlighting and line numbers.
+            </p>
+          </div>
         </div>
 
         {selectedFile && (
-          <span className="rounded-full border border-zinc-700 px-3 py-1 text-xs text-zinc-300">
+          <span className="rounded-md border border-zinc-700 px-3 py-1 text-xs text-zinc-300">
             {detectLanguage(selectedFile.path)}
           </span>
         )}
       </div>
 
-      <div className="grid grid-cols-3 gap-6">
+      <div className="grid gap-5 p-5 lg:grid-cols-[280px_minmax(0,1fr)]">
         <div className="space-y-3">
-          <div className="flex items-center gap-2 rounded-xl border border-zinc-800 bg-black px-3 py-2">
+          <div className="flex items-center gap-2 rounded-lg border border-zinc-800 bg-black px-3 py-2">
             <Search size={15} className="text-zinc-500" />
             <input
               value={search}
@@ -82,12 +87,12 @@ export default function FilePreview({
             />
           </div>
 
-          <div className="max-h-[420px] space-y-2 overflow-y-auto pr-1 custom-scrollbar">
+          <div className="max-h-[460px] space-y-2 overflow-y-auto pr-1 custom-scrollbar">
             {filteredFiles.map((file) => (
               <button
                 key={file.path}
                 onClick={() => selectFile(file.path)}
-                className={`w-full rounded-xl px-4 py-3 text-left transition-all ${
+                className={`w-full rounded-lg px-4 py-3 text-left transition-all ${
                   selectedFile?.path === file.path
                     ? "bg-white text-black"
                     : "bg-zinc-800 text-zinc-300 hover:bg-zinc-700"
@@ -107,16 +112,29 @@ export default function FilePreview({
           </div>
         </div>
 
-        <div className="col-span-2 overflow-hidden rounded-xl border border-zinc-800 bg-black">
+        <div className="min-w-0 overflow-hidden rounded-lg border border-zinc-800 bg-black">
           <div className="flex items-center justify-between border-b border-zinc-800 bg-zinc-950 px-4 py-3">
             <span className="truncate text-sm text-zinc-200">
               {selectedFile?.path || "No file selected"}
             </span>
-            {selectedFile && (
-              <span className="text-xs text-zinc-500">
-                {selectedFile.content.split(/\r?\n/).length} lines
-              </span>
-            )}
+            <div className="flex shrink-0 items-center gap-3">
+              {selectedFile && (
+                <span className="text-xs text-zinc-500">
+                  {selectedFile.content.split(/\r?\n/).length} lines
+                </span>
+              )}
+              {selectedFile && (
+                <button
+                  onClick={() =>
+                    navigator.clipboard?.writeText(selectedFile.path)
+                  }
+                  className="rounded-md border border-zinc-800 p-1.5 text-zinc-400 transition hover:border-zinc-600 hover:text-white"
+                  title="Copy file path"
+                >
+                  <Copy size={14} />
+                </button>
+              )}
+            </div>
           </div>
 
           <SyntaxHighlighter

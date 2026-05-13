@@ -18,7 +18,7 @@ export default function AnalysisProgress({ active }: Props) {
   if (!active) return null;
 
   return (
-    <div className="mb-8 rounded-2xl border border-cyan-500/30 bg-cyan-500/10 p-5">
+    <div className="mt-5 mb-2 rounded-xl border border-cyan-500/30 bg-cyan-500/10 p-5">
       <div className="mb-4 flex items-center gap-2 text-cyan-100">
         <Loader2 size={18} className="animate-spin" />
         <span className="font-medium">Analysis in progress</span>
