@@ -30,7 +30,7 @@ const items = [
   {
     icon: Brain,
     label: "Saved Repos",
-    id: "dashboard",
+    id: "saved-repos",
     alwaysVisible: true,
   },
   {

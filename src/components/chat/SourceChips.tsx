@@ -31,7 +31,7 @@ export default function SourceChips({
         <button
           key={source.path}
           onClick={() => onOpenFile?.(source.path)}
-          className="max-w-full truncate rounded-full border border-cyan-500/30 bg-cyan-500/10 px-3 py-1 text-xs text-cyan-200 hover:border-cyan-400"
+          className="max-w-full truncate rounded-md border border-cyan-500/30 bg-cyan-500/10 px-3 py-1 text-xs text-cyan-200 hover:border-cyan-400"
           title={`${source.path}:${source.startLine}-${source.endLine}`}
         >
           {source.path}

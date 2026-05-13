@@ -17,12 +17,12 @@ export default function SuggestedQuestions({
   onSelect,
 }: Props) {
   return (
-    <div className="mb-4 flex flex-wrap gap-2">
+    <div className="flex flex-wrap gap-2">
       {QUESTIONS.map((question) => (
         <button
           key={question}
           onClick={() => onSelect(question)}
-          className="rounded-full border border-zinc-700 bg-black/30 px-3 py-1.5 text-xs text-zinc-300 transition hover:border-cyan-500/50 hover:text-cyan-200"
+          className="rounded-md border border-zinc-800 bg-black/30 px-3 py-1.5 text-xs text-zinc-300 transition hover:border-cyan-500/50 hover:bg-cyan-500/10 hover:text-cyan-100"
         >
           {question}
         </button>

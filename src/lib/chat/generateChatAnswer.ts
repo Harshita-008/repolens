@@ -1,12 +1,12 @@
 import { geminiModel } from "../ai/gemini";
-import { openrouter } from "../ai/openrouter";
+import { getOpenRouterClient } from "../ai/openrouter";
 
 export async function generateChatAnswer(
   prompt: string
 ) {
   try {
     const completion =
-      await openrouter.chat.completions.create({
+      await getOpenRouterClient().chat.completions.create({
         model: "openai/gpt-oss-20b:free",
         temperature: 0.2,
         max_tokens: 800,

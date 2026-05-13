@@ -23,8 +23,10 @@ import RepoHeader from "@/components/workspace/RepoHeader";
 import RepoLaunchPanel from "@/components/workspace/RepoLaunchPanel";
 import RepoMetrics from "@/components/workspace/RepoMetrics";
 import StructurePanel from "@/components/workspace/StructurePanel";
-import WorkspaceRail from "@/components/workspace/WorkspaceRail";
+import WorkspaceInspector from "@/components/workspace/WorkspaceInspector";
 import WorkspaceSection from "@/components/workspace/WorkspaceSection";
+import WorkspaceTabs from "@/components/workspace/WorkspaceTabs";
+import WorkspaceChrome from "@/components/workspace/WorkspaceChrome";
 import type {
   AnalysisData,
   AnalysisListItem,
@@ -139,34 +141,48 @@ export default function HomePage() {
       <div className="min-h-screen lg:pl-[280px]">
         <div className="mx-auto grid max-w-[1600px] gap-5 px-4 py-5 lg:px-6 xl:grid-cols-[minmax(0,1fr)_280px]">
           <div className="min-w-0 space-y-5">
-            <RepoLaunchPanel
-              repoUrl={repoUrl}
-              loading={loading}
-              error={error}
-              onRepoUrlChange={setRepoUrl}
-              onAnalyze={() => analyzeRepo()}
-            />
-
             {data && (
-              <RepoHeader
-                data={data}
-                loading={loading}
-                onReanalyze={() =>
-                  analyzeRepo(data.repoUrl || repoUrl)
-                }
-              />
+              <WorkspaceChrome>
+                <RepoHeader
+                  data={data}
+                  loading={loading}
+                  onReanalyze={() =>
+                    analyzeRepo(data.repoUrl || repoUrl)
+                  }
+                />
+                <WorkspaceTabs />
+              </WorkspaceChrome>
             )}
 
-            <RepoDashboard
-              repos={savedRepos}
-              activeRepoName={data?.repoName}
-              loadingRepoName={loadingRepoName}
-              onOpenRepo={openSavedRepo}
-            />
+            {!data && (
+              <RepoLaunchPanel
+                repoUrl={repoUrl}
+                loading={loading}
+                error={error}
+                onRepoUrlChange={setRepoUrl}
+                onAnalyze={() => analyzeRepo()}
+              />
+            )}
 
             {data && (
               <div className="space-y-5">
                 <RepoMetrics data={data} />
+
+                <RepoLaunchPanel
+                  repoUrl={repoUrl}
+                  loading={loading}
+                  error={error}
+                  compact
+                  onRepoUrlChange={setRepoUrl}
+                  onAnalyze={() => analyzeRepo()}
+                />
+
+                <RepoDashboard
+                  repos={savedRepos}
+                  activeRepoName={data.repoName}
+                  loadingRepoName={loadingRepoName}
+                  onOpenRepo={openSavedRepo}
+                />
 
                 <MarkdownInsightSection
                   id="summary"
@@ -235,9 +251,18 @@ export default function HomePage() {
                 <StructurePanel tree={data.tree} />
               </div>
             )}
+
+            {!data && (
+              <RepoDashboard
+                repos={savedRepos}
+                activeRepoName={undefined}
+                loadingRepoName={loadingRepoName}
+                onOpenRepo={openSavedRepo}
+              />
+            )}
           </div>
 
-          <WorkspaceRail
+          <WorkspaceInspector
             data={data}
             selectedFilePath={selectedFilePath}
           />

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import axios from "axios";
+import { Bot, Loader2, MessageSquare, SendHorizontal, User } from "lucide-react";
 import ChatMarkdown from "./ChatMarkdown";
 import SourceChips, { ChatSource } from "./SourceChips";
 import SourceSnippetPanel from "./SourceSnippetPanel";
@@ -22,15 +23,10 @@ export default function RepoChat({
   repoName,
   onOpenFile,
 }: Props) {
-  const [question, setQuestion] =
-    useState("");
-
+  const [question, setQuestion] = useState("");
   const [messages, setMessages] = useState<ChatMessage[]>([]);
-
-  const [loading, setLoading] =
-    useState(false);
-  const messagesRef =
-    useRef<HTMLDivElement | null>(null);
+  const [loading, setLoading] = useState(false);
+  const messagesRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     const messagesEl = messagesRef.current;
@@ -45,9 +41,7 @@ export default function RepoChat({
     });
   }, [messages, loading]);
 
-  async function askQuestion(
-    selectedQuestion = question
-  ) {
+  async function askQuestion(selectedQuestion = question) {
     if (!selectedQuestion.trim() || loading) return;
 
     const userMessage: ChatMessage = {
@@ -55,10 +49,7 @@ export default function RepoChat({
       content: selectedQuestion,
     };
 
-    setMessages((prev) => [
-      ...prev,
-      userMessage,
-    ]);
+    setMessages((prev) => [...prev, userMessage]);
 
     const currentQuestion = selectedQuestion;
 
@@ -67,21 +58,17 @@ export default function RepoChat({
     try {
       setLoading(true);
 
-      const response = await axios.post(
-        "/api/chat",
-        {
-          repoName,
-          question: currentQuestion,
-          history: messages,
-        }
-      );
+      const response = await axios.post("/api/chat", {
+        repoName,
+        question: currentQuestion,
+        history: messages,
+      });
 
       setMessages((prev) => [
         ...prev,
         {
           role: "assistant",
-          content:
-            response.data.answer,
+          content: response.data.answer,
           sources: response.data.sources,
         },
       ]);
@@ -102,83 +89,78 @@ export default function RepoChat({
   }
 
   return (
-    <div className="bg-zinc-900/70 backdrop-blur-xl border border-zinc-800 rounded-3xl p-6 shadow-2xl">
-      <h2 className="text-2xl font-semibold mb-4">
-        Chat with Repository
-      </h2>
+    <div className="overflow-hidden rounded-xl border border-zinc-800 bg-zinc-950/70">
+      <div className="flex flex-wrap items-start justify-between gap-4 border-b border-zinc-800 px-5 py-4">
+        <div className="flex items-start gap-3">
+          <div className="grid h-9 w-9 place-items-center rounded-lg border border-zinc-800 bg-black text-cyan-300">
+            <MessageSquare size={17} />
+          </div>
+          <div>
+            <h2 className="text-lg font-semibold text-white">
+              Chat with Repository
+            </h2>
+            <p className="mt-1 text-sm text-zinc-400">
+              Ask grounded questions against the analyzed repository context.
+            </p>
+          </div>
+        </div>
 
-      {messages.length === 0 && (
+        <span className="rounded-md border border-zinc-800 px-3 py-1 text-xs text-zinc-400">
+          {repoName}
+        </span>
+      </div>
+
+      <div className="border-b border-zinc-800 px-5 py-4">
         <SuggestedQuestions
           onSelect={(selectedQuestion) =>
             askQuestion(selectedQuestion)
           }
         />
-      )}
+      </div>
 
       <div
         ref={messagesRef}
-        className="h-[500px] overflow-y-auto space-y-3 mb-6 pr-2 custom-scrollbar"
+        className="h-[520px] space-y-4 overflow-y-auto bg-black/20 px-5 py-5 custom-scrollbar"
       >
-        {messages.map((message, index) => (
-          <div
-            key={index}
-            className={`flex w-full ${
-              message.role === "user"
-                ? "justify-end"
-                : "justify-start pl-2"
-            }`}
-          >
-            <div
-              className={`max-w-[70%] min-w-[120px] rounded-3xl px-5 py-3 transition-all duration-300 hover:scale-[1.01] animate-in fade-in duration-300 border ${
-                message.role === "user"
-                  ? "bg-gradient-to-r from-violet-500 to-fuchsia-500 text-white border-transparent shadow-lg shadow-fuchsia-500/30 ml-auto shadow-violet-500/20"
-                  : "bg-zinc-900/90 backdrop-blur-xl border border-zinc-700 text-zinc-100 shadow-xl"
-              }`}
-            >
-              <div className="text-xs mb-2 opacity-60">
-                {message.role === "user"
-                  ? "You"
-                  : "RepoLENS AI"}
-              </div>
-
-              {message.role === "user" ? (
-                <p className="whitespace-pre-wrap text-[15px] leading-7">
-                  {message.content}
-                </p>
-              ) : (
-                <>
-                  <ChatMarkdown content={message.content} />
-                  <SourceChips
-                    sources={message.sources}
-                    onOpenFile={onOpenFile}
-                  />
-                  <SourceSnippetPanel
-                    sources={message.sources}
-                    onOpenFile={onOpenFile}
-                  />
-                </>
-              )}
+        {messages.length === 0 && !loading && (
+          <div className="grid h-full place-items-center rounded-lg border border-dashed border-zinc-800 bg-black/20 p-8 text-center">
+            <div>
+              <Bot className="mx-auto mb-3 text-zinc-600" />
+              <h3 className="font-medium text-zinc-200">
+                Ready for repo questions
+              </h3>
+              <p className="mt-2 max-w-md text-sm leading-6 text-zinc-500">
+                Use a suggested prompt or ask about files, architecture,
+                data flow, testing focus, or risky areas.
+              </p>
             </div>
           </div>
+        )}
+
+        {messages.map((message, index) => (
+          <ChatBubble
+            key={`${message.role}-${index}`}
+            message={message}
+            onOpenFile={onOpenFile}
+          />
         ))}
 
         {loading && (
           <div className="flex justify-start">
-            <div className="bg-zinc-800 border border-zinc-700 rounded-3xl px-5 py-3 transition-all duration-300 hover:scale-[1.01] text-zinc-300 animate-pulse">
+            <div className="inline-flex items-center gap-2 rounded-lg border border-zinc-800 bg-zinc-900 px-4 py-3 text-sm text-zinc-300">
+              <Loader2 size={15} className="animate-spin text-cyan-300" />
               RepoLENS is thinking...
             </div>
           </div>
         )}
       </div>
 
-      <div className="flex gap-3">
+      <div className="flex gap-3 border-t border-zinc-800 bg-zinc-950/90 p-4">
         <input
           value={question}
-          onChange={(e) =>
-            setQuestion(e.target.value)
-          }
+          onChange={(event) => setQuestion(event.target.value)}
           placeholder="Ask about the repository..."
-          className="flex-1 bg-black border border-zinc-700 rounded-xl px-4 py-3"
+          className="min-h-11 flex-1 rounded-lg border border-zinc-800 bg-black px-4 text-sm text-zinc-100 outline-none transition placeholder:text-zinc-600 focus:border-cyan-400"
           onKeyDown={(event) => {
             if (event.key === "Enter") {
               askQuestion();
@@ -188,11 +170,85 @@ export default function RepoChat({
 
         <button
           onClick={() => askQuestion()}
-          disabled={loading}
-          className="bg-white text-black px-5 rounded-xl font-medium"
+          disabled={loading || !question.trim()}
+          className="inline-flex min-h-11 items-center gap-2 rounded-lg bg-white px-4 text-sm font-semibold text-black transition hover:bg-zinc-200 disabled:cursor-not-allowed disabled:opacity-50"
         >
-          {loading ? "Thinking..." : "Send"}
+          {loading ? (
+            <>
+              <Loader2 size={15} className="animate-spin" />
+              Thinking
+            </>
+          ) : (
+            <>
+              Send
+              <SendHorizontal size={15} />
+            </>
+          )}
         </button>
+      </div>
+    </div>
+  );
+}
+
+function ChatBubble({
+  message,
+  onOpenFile,
+}: {
+  message: ChatMessage;
+  onOpenFile?: (path: string) => void;
+}) {
+  const isUser = message.role === "user";
+
+  return (
+    <div className={`flex w-full ${isUser ? "justify-end" : "justify-start"}`}>
+      <div
+        className={`flex max-w-[82%] gap-3 ${
+          isUser ? "flex-row-reverse" : "flex-row"
+        }`}
+      >
+        <div
+          className={`grid h-8 w-8 shrink-0 place-items-center rounded-lg border ${
+            isUser
+              ? "border-cyan-500/30 bg-cyan-500/10 text-cyan-200"
+              : "border-zinc-800 bg-black text-cyan-300"
+          }`}
+        >
+          {isUser ? <User size={15} /> : <Bot size={15} />}
+        </div>
+
+        <div
+          className={`rounded-xl border px-4 py-3 shadow-xl shadow-black/10 ${
+            isUser
+              ? "border-cyan-500/30 bg-cyan-500/10 text-cyan-50"
+              : "border-zinc-800 bg-zinc-950 text-zinc-100"
+          }`}
+        >
+          <div
+            className={`mb-2 text-xs ${
+              isUser ? "text-cyan-200/80" : "text-zinc-500"
+            }`}
+          >
+            {isUser ? "You" : "RepoLENS"}
+          </div>
+
+          {isUser ? (
+            <p className="whitespace-pre-wrap text-sm leading-6">
+              {message.content}
+            </p>
+          ) : (
+            <>
+              <ChatMarkdown content={message.content} />
+              <SourceChips
+                sources={message.sources}
+                onOpenFile={onOpenFile}
+              />
+              <SourceSnippetPanel
+                sources={message.sources}
+                onOpenFile={onOpenFile}
+              />
+            </>
+          )}
+        </div>
       </div>
     </div>
   );

@@ -22,7 +22,7 @@ export default function RepoHeader({
   onReanalyze,
 }: RepoHeaderProps) {
   return (
-    <div className="sticky top-0 z-30 -mx-3 border-b border-zinc-800 bg-black/85 px-3 py-3 backdrop-blur-xl">
+    <div className="border-b border-zinc-900 bg-black py-3">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">

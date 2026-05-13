@@ -22,7 +22,7 @@ export default function SourceSnippetPanel({
       {sources.slice(0, 3).map((source) => (
         <div
           key={`${source.path}-${source.startLine}`}
-          className="overflow-hidden rounded-xl border border-zinc-800 bg-black/60"
+          className="overflow-hidden rounded-lg border border-zinc-800 bg-black/60"
         >
           <button
             onClick={() => onOpenFile?.(source.path)}

@@ -18,7 +18,7 @@ export default function RepoDashboard({
 }: Props) {
   return (
     <section
-      id="dashboard"
+      id="saved-repos"
       className="scroll-mt-28 rounded-xl border border-zinc-800 bg-zinc-950/70"
     >
       <div className="flex items-center justify-between gap-4 border-b border-zinc-800 px-5 py-4">
