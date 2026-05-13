@@ -4,6 +4,9 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "RepoLens",
   description: "AI-powered repository intelligence for codebase onboarding.",
+  icons: {
+    icon: "/icon.svg",
+  },
 };
 
 export default function RootLayout({

@@ -1,5 +1,6 @@
 import fs from "fs";
 import path from "path";
+import { analyzeRepoHealth } from "../health/analyzeRepoHealth";
 import {
   AnalysisData,
   AnalysisListItem,
@@ -55,22 +56,39 @@ export function saveAnalysis(
 }
 
 export function getAnalysis(repoName: string) {
-  return readStore().find(
+  const analysis = readStore().find(
     (analysis) => analysis.repoName === repoName
   );
+
+  return analysis ? normalizeAnalysis(analysis) : undefined;
 }
 
 export function listAnalyses(): AnalysisListItem[] {
-  return readStore().map((analysis) => ({
+  return readStore().map(normalizeAnalysis).map((analysis) => ({
     repoName: analysis.repoName,
     repoUrl: analysis.repoUrl,
     analyzedAt: analysis.analyzedAt,
     totalFiles: analysis.totalFiles,
     healthScore: analysis.health.score,
     healthGrade: analysis.health.grade,
-    topRisks: analysis.health.issues
-      .filter((issue) => issue.severity !== "low")
-      .slice(0, 3)
-      .map((issue) => issue.title),
+    topRisks: Array.from(
+      new Set(
+        analysis.health.issues
+          .filter((issue) => issue.severity !== "low")
+          .map((issue) => issue.title)
+      )
+    ).slice(0, 3),
   }));
+}
+
+function normalizeAnalysis(
+  analysis: AnalysisData
+): AnalysisData {
+  return {
+    ...analysis,
+    health: analyzeRepoHealth(
+      analysis.contextFiles || [],
+      analysis.tree
+    ),
+  };
 }

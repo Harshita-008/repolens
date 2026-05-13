@@ -84,9 +84,9 @@ export default function RepoDashboard({
 
                 {repo.topRisks.length > 0 && (
                   <div className="mt-3 flex flex-wrap gap-2">
-                    {repo.topRisks.map((risk) => (
+                    {repo.topRisks.map((risk, index) => (
                       <span
-                        key={risk}
+                        key={`${risk}-${index}`}
                         className="rounded-md border border-amber-500/30 bg-amber-500/10 px-2 py-1 text-xs text-amber-200"
                       >
                         {risk}

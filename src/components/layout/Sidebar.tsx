@@ -15,9 +15,12 @@ import {
   Search,
   ShieldCheck,
 } from "lucide-react";
+import type { WorkspaceView } from "@/components/workspace/workspaceViews";
 
 interface SidebarProps {
   hasActiveRepo?: boolean;
+  activeView?: WorkspaceView;
+  onViewChange?: (view: WorkspaceView) => void;
 }
 
 const items = [
@@ -31,57 +34,69 @@ const items = [
     icon: Brain,
     label: "Saved Repos",
     id: "saved-repos",
+    view: "overview",
     alwaysVisible: true,
   },
   {
     icon: BookOpen,
-    label: "Summary",
-    id: "summary",
+    label: "Overview",
+    id: "overview",
+    view: "overview",
   },
   {
     icon: GitBranch,
     label: "Read First",
-    id: "read-first",
+    id: "overview",
+    view: "overview",
   },
   {
     icon: Map,
     label: "Roadmap",
     id: "roadmap",
+    view: "roadmap",
   },
   {
     icon: Network,
     label: "Architecture",
     id: "architecture",
+    view: "architecture",
   },
   {
     icon: ShieldCheck,
     label: "Health",
     id: "health",
+    view: "health",
   },
   {
     icon: GitPullRequest,
     label: "PR Impact",
     id: "impact",
+    view: "impact",
   },
   {
     icon: MessageSquare,
     label: "Chat",
     id: "chat",
+    view: "chat",
   },
   {
     icon: Files,
     label: "Files",
     id: "files",
+    view: "files",
   },
   {
     icon: FolderTree,
     label: "Structure",
     id: "structure",
+    view: "files",
   },
 ];
 
 export default function Sidebar({
   hasActiveRepo = false,
+  activeView,
+  onViewChange,
 }: SidebarProps) {
   const [active, setActive] = useState("top");
 
@@ -166,6 +181,12 @@ export default function Sidebar({
           .filter((item) => item.alwaysVisible || hasActiveRepo)
           .map((item) => {
             const Icon = item.icon;
+            const itemView = item.view as WorkspaceView | undefined;
+            const isActive =
+              itemView && activeView
+                ? activeView === itemView &&
+                  item.label === getPrimaryLabelForView(activeView)
+                : !hasActiveRepo && active === item.id;
 
             return (
               <button
@@ -181,6 +202,16 @@ export default function Sidebar({
                     return;
                   }
 
+                  if (itemView) {
+                    onViewChange?.(itemView);
+                    window.scrollTo({
+                      top: 0,
+                      behavior: "smooth",
+                    });
+
+                    return;
+                  }
+
                   document
                     .getElementById(item.id)
                     ?.scrollIntoView({
@@ -188,12 +219,15 @@ export default function Sidebar({
                     });
                 }}
                 className={`flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition ${
-                  active === item.id
-                    ? "bg-white text-black"
-                    : "text-zinc-400 hover:bg-zinc-900 hover:text-white"
+                  isActive
+                    ? "border border-cyan-500/40 bg-cyan-500/10 text-cyan-50 shadow-[0_0_22px_rgba(34,211,238,0.12)]"
+                    : "border border-transparent text-zinc-400 hover:border-zinc-800 hover:bg-zinc-900 hover:text-white"
                 }`}
               >
-                <Icon size={17} />
+                <Icon
+                  size={17}
+                  className={isActive ? "text-cyan-300" : ""}
+                />
                 <span>{item.label}</span>
               </button>
             );
@@ -201,4 +235,14 @@ export default function Sidebar({
       </nav>
     </aside>
   );
+}
+
+function getPrimaryLabelForView(view: WorkspaceView) {
+  if (view === "overview") return "Overview";
+  if (view === "architecture") return "Architecture";
+  if (view === "health") return "Health";
+  if (view === "impact") return "PR Impact";
+  if (view === "chat") return "Chat";
+  if (view === "files") return "Files";
+  return "Roadmap";
 }

@@ -65,7 +65,7 @@ export async function POST(req: NextRequest) {
       generateRoadmap(analysisInput),
     ]);
 
-    const health = analyzeRepoHealth(files);
+    const health = analyzeRepoHealth(files, tree);
 
     saveRepoContext({
       repoName,

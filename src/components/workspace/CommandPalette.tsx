@@ -2,33 +2,21 @@
 
 import { useEffect, useMemo, useState } from "react";
 import {
-  BookOpen,
-  FileText,
-  GitPullRequest,
-  Map,
-  MessageSquare,
-  Network,
   Search,
-  ShieldCheck,
 } from "lucide-react";
+import {
+  WorkspaceView,
+  workspaceViews,
+} from "./workspaceViews";
 
 interface CommandPaletteProps {
   enabled: boolean;
+  onViewChange?: (view: WorkspaceView) => void;
 }
-
-const commands = [
-  { label: "Open Summary", id: "summary", icon: FileText },
-  { label: "Open Read First", id: "read-first", icon: BookOpen },
-  { label: "Open Roadmap", id: "roadmap", icon: Map },
-  { label: "Open Architecture", id: "architecture", icon: Network },
-  { label: "Open Health", id: "health", icon: ShieldCheck },
-  { label: "Open PR Impact", id: "impact", icon: GitPullRequest },
-  { label: "Open Chat", id: "chat", icon: MessageSquare },
-  { label: "Open Files", id: "files", icon: FileText },
-];
 
 export default function CommandPalette({
   enabled,
+  onViewChange,
 }: CommandPaletteProps) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
@@ -54,7 +42,7 @@ export default function CommandPalette({
 
   const filteredCommands = useMemo(
     () =>
-      commands.filter((command) =>
+      workspaceViews.filter((command) =>
         command.label.toLowerCase().includes(query.toLowerCase())
       ),
     [query]
@@ -88,9 +76,7 @@ export default function CommandPalette({
                 key={command.id}
                 onClick={() => {
                   setOpen(false);
-                  document
-                    .getElementById(command.id)
-                    ?.scrollIntoView({ behavior: "smooth" });
+                  onViewChange?.(command.id);
                 }}
                 className="flex w-full items-center gap-3 rounded-lg px-3 py-3 text-left text-sm text-zinc-300 transition hover:bg-zinc-900 hover:text-white"
               >

@@ -1,10 +1,24 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import {
+  GenerativeModel,
+  GoogleGenerativeAI,
+} from "@google/generative-ai";
 
-const apiKey = process.env.GEMINI_API_KEY!;
+let model: GenerativeModel | null = null;
 
-const genAI = new GoogleGenerativeAI(apiKey);
+export function getGeminiModel() {
+  if (model) return model;
 
-export const geminiModel =
-  genAI.getGenerativeModel({
+  const apiKey = process.env.GEMINI_API_KEY;
+
+  if (!apiKey) {
+    throw new Error("GEMINI_API_KEY is required to call Gemini.");
+  }
+
+  const genAI = new GoogleGenerativeAI(apiKey);
+
+  model = genAI.getGenerativeModel({
     model: "gemini-1.5-flash",
   });
+
+  return model;
+}

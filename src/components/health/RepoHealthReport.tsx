@@ -12,6 +12,14 @@ interface Props {
 }
 
 export default function RepoHealthReport({ report }: Props) {
+  const severityCounts = {
+    high: report.issues.filter((issue) => issue.severity === "high")
+      .length,
+    medium: report.issues.filter((issue) => issue.severity === "medium")
+      .length,
+    low: report.issues.filter((issue) => issue.severity === "low")
+      .length,
+  };
   const signals = [
     ["README", report.signals.hasReadme],
     ["Tests", report.signals.hasTests],
@@ -32,6 +40,11 @@ export default function RepoHealthReport({ report }: Props) {
           </h2>
           <p className="mt-1 text-sm text-zinc-400">
             Generic production-readiness signals from the scanned codebase.
+          </p>
+          <p className="mt-2 text-xs text-zinc-500">
+            Score reflects {severityCounts.high} high,{" "}
+            {severityCounts.medium} medium, and {severityCounts.low} low
+            finding{report.issues.length === 1 ? "" : "s"}.
           </p>
         </div>
 

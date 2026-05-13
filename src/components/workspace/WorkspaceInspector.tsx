@@ -10,16 +10,28 @@ import {
   Route,
 } from "lucide-react";
 import type { AnalysisData } from "@/lib/repositories/types";
+import {
+  WorkspaceView,
+  workspaceViews,
+} from "./workspaceViews";
 
 interface WorkspaceInspectorProps {
   data: AnalysisData | null;
   selectedFilePath: string;
+  activeView: WorkspaceView;
+  onViewChange: (view: WorkspaceView) => void;
 }
 
 export default function WorkspaceInspector({
   data,
   selectedFilePath,
+  activeView,
+  onViewChange,
 }: WorkspaceInspectorProps) {
+  const activeLabel =
+    workspaceViews.find((view) => view.id === activeView)?.label ||
+    "Workspace";
+
   return (
     <aside className="hidden xl:block">
       <div className="sticky top-24 space-y-3">
@@ -31,6 +43,12 @@ export default function WorkspaceInspector({
 
           {data ? (
             <div className="space-y-3">
+              <InspectorCard
+                icon={FolderGit2}
+                label="Current view"
+                value={activeLabel}
+                detail={getViewDetail(activeView, data)}
+              />
               <InspectorCard
                 icon={FolderGit2}
                 label="Active repo"
@@ -85,25 +103,56 @@ export default function WorkspaceInspector({
               ["Analyze a diff", "impact"],
               ["Ask repo chat", "chat"],
               ["Inspect files", "files"],
-            ].map(([label, id]) => (
+            ].map(([label, id]) => {
+              const view = id as WorkspaceView;
+
+              return (
               <button
                 key={id}
-                onClick={() =>
-                  document
-                    .getElementById(id)
-                    ?.scrollIntoView({ behavior: "smooth" })
-                }
+                onClick={() => onViewChange(view)}
                 className="flex w-full items-center justify-between rounded-lg px-2 py-2 text-left text-sm text-zinc-400 transition hover:bg-zinc-900 hover:text-white"
               >
                 {label}
                 <ArrowRight size={13} />
               </button>
-            ))}
+              );
+            })}
           </div>
         </div>
       </div>
     </aside>
   );
+}
+
+function getViewDetail(
+  activeView: WorkspaceView,
+  data: AnalysisData
+) {
+  if (activeView === "architecture") {
+    return `${data.graph.nodes.length} nodes and ${data.graph.edges.length} relationships`;
+  }
+
+  if (activeView === "health") {
+    return `${data.health.issues.length} health findings, grade ${data.health.grade}`;
+  }
+
+  if (activeView === "impact") {
+    return "Paste a diff or GitHub PR URL for review focus";
+  }
+
+  if (activeView === "chat") {
+    return "Ask grounded questions with repo citations";
+  }
+
+  if (activeView === "files") {
+    return `${data.importantFiles.length} important files available`;
+  }
+
+  if (activeView === "roadmap") {
+    return "Developer learning path for this repository";
+  }
+
+  return "Summary, read-first guide, saved repos, and metrics";
 }
 
 function InspectorCard({

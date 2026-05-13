@@ -22,13 +22,14 @@ interface Props {
 
 export default function PrImpactAnalyzer({ repoName }: Props) {
   const [diff, setDiff] = useState("");
+  const [prUrl, setPrUrl] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [report, setReport] =
     useState<PrImpactReport | null>(null);
 
   async function analyzeImpact() {
-    if (!diff.trim() || loading) return;
+    if ((!diff.trim() && !prUrl.trim()) || loading) return;
 
     try {
       setError("");
@@ -36,13 +37,14 @@ export default function PrImpactAnalyzer({ repoName }: Props) {
       const response = await axios.post("/api/pr-impact", {
         repoName,
         diff,
+        prUrl,
       });
 
       setReport(response.data);
     } catch (impactError) {
       console.error(impactError);
       setError(
-        "Could not analyze this diff. Make sure this repository is opened and the pasted content is a unified git diff."
+        "Could not analyze this change. Paste a unified diff or enter a public GitHub PR URL for this repository."
       );
     } finally {
       setLoading(false);
@@ -78,8 +80,8 @@ export default function PrImpactAnalyzer({ repoName }: Props) {
               PR / Diff Impact Analyzer
             </h2>
             <p className="mt-1 text-sm text-zinc-400">
-              Paste a unified git diff to identify risk, affected modules, and
-              test focus.
+              Paste a unified git diff or enter a GitHub PR URL to identify
+              risk, affected modules, and test focus.
             </p>
           </div>
         </div>
@@ -91,6 +93,21 @@ export default function PrImpactAnalyzer({ repoName }: Props) {
 
       <div className="grid gap-5 p-5 xl:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)]">
         <div className="space-y-4">
+          <div className="rounded-lg border border-zinc-800 bg-black p-4">
+            <label className="mb-2 block text-sm font-medium text-zinc-200">
+              GitHub PR URL
+            </label>
+            <input
+              value={prUrl}
+              onChange={(event) => setPrUrl(event.target.value)}
+              placeholder="https://github.com/org/repo/pull/123"
+              className="min-h-11 w-full rounded-lg border border-zinc-800 bg-zinc-950 px-4 text-sm text-zinc-100 outline-none transition placeholder:text-zinc-600 focus:border-cyan-400"
+            />
+            <p className="mt-2 text-xs leading-5 text-zinc-500">
+              Leave the diff empty to fetch the public PR diff automatically.
+            </p>
+          </div>
+
           <div className="rounded-lg border border-zinc-800 bg-black">
             <div className="flex items-center justify-between border-b border-zinc-800 px-4 py-3">
               <span className="inline-flex items-center gap-2 text-sm font-medium text-zinc-200">
@@ -119,7 +136,7 @@ export default function PrImpactAnalyzer({ repoName }: Props) {
 
           <button
             onClick={analyzeImpact}
-            disabled={loading || !diff.trim()}
+            disabled={loading || (!diff.trim() && !prUrl.trim())}
             className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-white px-5 py-3 text-sm font-semibold text-black transition hover:bg-zinc-200 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {loading ? (
@@ -145,8 +162,9 @@ export default function PrImpactAnalyzer({ repoName }: Props) {
                   Waiting for a diff
                 </h3>
                 <p className="mt-2 max-w-sm text-sm leading-6 text-zinc-500">
-                  The report will summarize review risk, changed files,
-                  mapped modules, and test focus for this repository.
+                  Paste a diff or enter a public GitHub PR URL. The report
+                  will summarize review risk, changed files, mapped modules,
+                  and test focus for this repository.
                 </p>
               </div>
             </div>

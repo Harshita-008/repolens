@@ -4,6 +4,7 @@ import {
   saveRepoContext,
 } from "@/lib/chat/repoContextStore";
 import { analyzeDiffImpact } from "@/lib/diff/analyzeDiffImpact";
+import { fetchGithubPrDiff } from "@/lib/diff/fetchGithubPrDiff";
 import { getAnalysis } from "@/lib/repositories/repoAnalysisStore";
 
 export async function POST(req: NextRequest) {
@@ -11,13 +12,31 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const repoName =
       typeof body.repoName === "string" ? body.repoName : "";
-    const diff = typeof body.diff === "string" ? body.diff : "";
+    let diff = typeof body.diff === "string" ? body.diff : "";
+    const prUrl =
+      typeof body.prUrl === "string" ? body.prUrl.trim() : "";
 
-    if (!repoName || !diff.trim()) {
+    if (!repoName || (!diff.trim() && !prUrl)) {
       return NextResponse.json(
-        { error: "Repository name and diff are required." },
+        { error: "Repository name and diff or PR URL are required." },
         { status: 400 }
       );
+    }
+
+    if (!diff.trim() && prUrl) {
+      try {
+        diff = await fetchGithubPrDiff(prUrl);
+      } catch (diffError) {
+        return NextResponse.json(
+          {
+            error:
+              diffError instanceof Error
+                ? diffError.message
+                : "Could not fetch PR diff from GitHub.",
+          },
+          { status: 400 }
+        );
+      }
     }
 
     let context = getRepoContext(repoName);

@@ -1,4 +1,4 @@
-import { geminiModel } from "../ai/gemini";
+import { getGeminiModel } from "../ai/gemini";
 import { getOpenRouterClient } from "../ai/openrouter";
 
 export async function generateChatAnswer(
@@ -33,7 +33,7 @@ export async function generateChatAnswer(
     console.error(openRouterError);
 
     const result =
-      await geminiModel.generateContent(prompt);
+      await getGeminiModel().generateContent(prompt);
 
     return result.response.text();
   }

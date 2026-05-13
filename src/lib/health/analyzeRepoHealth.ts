@@ -12,17 +12,23 @@ const SECRET_PATTERNS = [
 ];
 
 export function analyzeRepoHealth(
-  files: RepoFile[]
+  files: RepoFile[],
+  tree = ""
 ): RepoHealthReport {
-  const paths = files.map((file) => file.path.toLowerCase());
+  const paths = Array.from(
+    new Set([
+      ...files.map((file) => file.path.toLowerCase()),
+      ...extractPathsFromTree(tree).map((file) =>
+        file.toLowerCase()
+      ),
+    ])
+  );
   const issues: RepoHealthIssue[] = [];
 
   const hasReadme = paths.some((file) =>
     file.endsWith("readme.md")
   );
-  const hasTests = paths.some((file) =>
-    /(^|\/)(__tests__|test|tests|spec)(\/|\.|-)/.test(file)
-  );
+  const hasTests = paths.some(isTestPath);
   const hasCi = paths.some((file) =>
     file.startsWith(".github/workflows/")
   );
@@ -93,7 +99,9 @@ export function analyzeRepoHealth(
   issues.push(...detectLargeFiles(files));
   issues.push(...detectPossibleSecrets(files));
 
-  const score = calculateScore(issues);
+  const rankedIssues = rankIssues(issues);
+
+  const score = calculateScore(rankedIssues);
 
   return {
     score,
@@ -106,8 +114,29 @@ export function analyzeRepoHealth(
       hasEnvExample,
       packageManagers,
     },
-    issues: issues.slice(0, 12),
+    issues: rankedIssues.slice(0, 12),
   };
+}
+
+function extractPathsFromTree(tree: string) {
+  const stack: string[] = [];
+  const paths: string[] = [];
+
+  for (const line of tree.split(/\r?\n/)) {
+    const match = line.match(/^(\s*)- (.+)$/);
+
+    if (!match) continue;
+
+    const depth = Math.floor(match[1].length / 2);
+    const name = match[2].trim();
+
+    stack[depth] = name;
+    stack.length = depth + 1;
+
+    paths.push(stack.join("/"));
+  }
+
+  return paths;
 }
 
 function detectPackageManagers(paths: string[]) {
@@ -121,6 +150,13 @@ function detectPackageManagers(paths: string[]) {
   if (paths.includes("requirements.txt")) managers.push("pip");
 
   return managers;
+}
+
+function isTestPath(path: string) {
+  return (
+    /(^|\/)(__tests__|test|tests|spec)(\/|$)/.test(path) ||
+    /\.(test|spec)\.[cm]?[jt]sx?$/.test(path)
+  );
 }
 
 function detectLargeFiles(
@@ -146,9 +182,13 @@ function detectPossibleSecrets(
 ): RepoHealthIssue[] {
   return files
     .filter((file) =>
-      SECRET_PATTERNS.some((pattern) =>
-        pattern.test(file.content)
-      )
+      SECRET_PATTERNS.some((pattern) => {
+        const match = file.content.match(pattern);
+
+        return Boolean(
+          match && !isLikelyPlaceholderSecret(file.path, match[0])
+        );
+      })
     )
     .slice(0, 5)
     .map((file) => ({
@@ -161,6 +201,34 @@ function detectPossibleSecrets(
       recommendation:
         "Move secrets into environment variables and rotate any exposed credentials.",
     }));
+}
+
+function isLikelyPlaceholderSecret(
+  filePath: string,
+  matchedText: string
+) {
+  const combined = `${filePath}\n${matchedText}`.toLowerCase();
+
+  return /fake|dummy|placeholder|example|sample|mock|test/.test(
+    combined
+  );
+}
+
+function rankIssues(issues: RepoHealthIssue[]) {
+  const severityWeight = {
+    high: 0,
+    medium: 1,
+    low: 2,
+  };
+
+  return [...issues].sort((a, b) => {
+    const severityDelta =
+      severityWeight[a.severity] - severityWeight[b.severity];
+
+    if (severityDelta !== 0) return severityDelta;
+
+    return a.title.localeCompare(b.title);
+  });
 }
 
 function calculateScore(issues: RepoHealthIssue[]) {

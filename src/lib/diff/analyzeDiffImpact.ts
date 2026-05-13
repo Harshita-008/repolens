@@ -67,7 +67,7 @@ function getRiskReasons(path: string, churn: number) {
   if (/api|route|controller|server/.test(lowerPath)) {
     reasons.push("API or server behavior changed");
   }
-  if (/auth|session|token|permission/.test(lowerPath)) {
+  if (/auth|session|token|jwt|oauth|credential|permission/.test(lowerPath)) {
     reasons.push("Authentication or authorization area");
   }
   if (/db|database|schema|migration|prisma/.test(lowerPath)) {
@@ -102,7 +102,7 @@ function buildSuggestedTests(
     tests.add("Validate migrations and data access paths on a disposable database.");
   }
 
-  if (files.some((file) => /auth|token|session/i.test(file.path))) {
+  if (files.some((file) => /auth|token|jwt|oauth|session/i.test(file.path))) {
     tests.add("Test unauthorized, expired-session, and happy-path access.");
   }
 
