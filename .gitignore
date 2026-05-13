@@ -1,7 +1,7 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies
-/node_modules
+node_modules/
 /.pnp
 .pnp.*
 .yarn/*
@@ -10,32 +10,74 @@
 !.yarn/releases
 !.yarn/versions
 
+# package manager caches
+.npm/
+.pnpm-store/
+.yarn/cache/
+.yarn/unplugged/
+.yarn/build-state.yml
+.yarn/install-state.gz
+
 # testing
-/coverage
+coverage/
+.nyc_output/
 
 # next.js
-/.next/
-/out/
+.next/
+out/
 
 # production
-/build
+build/
+dist/
 
-# misc
-.DS_Store
+# local cloned repositories and generated analysis data
+repos/
+tmp/
+temp/
+uploads/
+*.db
+*.sqlite
+*.sqlite3
+chroma/
+.chroma/
+chromadb/
+
+# env files and local secrets
+.env
+.env.*
+!.env.example
+!.env.*.example
 *.pem
-
-# debug
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-.pnpm-debug.log*
-
-# env files (can opt-in for committing if needed)
-.env*
+*.key
+*.p12
+*.pfx
+*.crt
+*.cer
 
 # vercel
-.vercel
+.vercel/
 
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.pnpm-debug.log*
+
+# OS and editor files
+.DS_Store
+Thumbs.db
+desktop.ini
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+
+# local tool/extension output
+.github/java-upgrade/
