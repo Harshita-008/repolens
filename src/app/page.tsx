@@ -8,8 +8,11 @@ import FilePreview from "@/components/repo/FilePreview";
 import { TypeAnimation } from "react-type-animation";
 import Sidebar from "@/components/layout/Sidebar";
 import DependencyHeatmap from "@/components/DependencyHeatmap";
-import ReactMarkdown from "react-markdown";
 import MarkdownRenderer from "@/components/MarkdownRenderer";
+import type {
+  GraphEdge,
+  GraphNode,
+} from "@/lib/parser/graph/types";
 
 import {
   FolderGit2,
@@ -17,6 +20,27 @@ import {
   GitBranch,
   MessageSquare,
 } from "lucide-react";
+
+interface AnalysisData {
+  repoName: string;
+  totalFiles: number;
+  tree: string;
+  graph: {
+    nodes: GraphNode[];
+    edges: GraphEdge[];
+  };
+  summary: string;
+  readFirst: string;
+  roadmap: string;
+  heatmap: {
+    path: string;
+    score: number;
+  }[];
+  importantFiles: {
+    path: string;
+    content: string;
+  }[];
+}
 
 const proseStyles = `
   prose
@@ -57,7 +81,23 @@ const proseStyles = `
 export default function HomePage() {
   const [repoUrl, setRepoUrl] = useState("");
   const [loading, setLoading] = useState(false);
-  const [data, setData] = useState<any>(null);
+  const [data, setData] =
+    useState<AnalysisData | null>(null);
+  const [selectedFilePath, setSelectedFilePath] =
+    useState<string>("");
+
+  function openFile(path: string) {
+    setSelectedFilePath(path);
+
+    requestAnimationFrame(() => {
+      document
+        .getElementById("files")
+        ?.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+    });
+  }
 
   async function analyzeRepo() {
     try {
@@ -71,6 +111,9 @@ export default function HomePage() {
       );
 
       setData(response.data);
+      setSelectedFilePath(
+        response.data.importantFiles?.[0]?.path || ""
+      );
 
       localStorage.setItem(
         "repoName",
@@ -259,6 +302,7 @@ export default function HomePage() {
 
               <ArchitectureGraph
                 graph={data.graph}
+                onOpenFile={openFile}
               />
             </section>
 
@@ -271,12 +315,15 @@ export default function HomePage() {
             <section id="chat">
               <RepoChat
                 repoName={data.repoName}
+                onOpenFile={openFile}
               />
             </section>
 
             <section id="files">
               <FilePreview
                 files={data.importantFiles}
+                selectedPath={selectedFilePath}
+                onSelectFile={setSelectedFilePath}
               />
             </section>
 

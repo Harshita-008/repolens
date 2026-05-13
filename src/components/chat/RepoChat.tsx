@@ -2,19 +2,24 @@
 
 import { useEffect, useRef, useState } from "react";
 import axios from "axios";
-import ReactMarkdown from "react-markdown";
+import ChatMarkdown from "./ChatMarkdown";
+import SourceChips, { ChatSource } from "./SourceChips";
+import SuggestedQuestions from "./SuggestedQuestions";
 
 interface Props {
   repoName: string;
+  onOpenFile?: (path: string) => void;
 }
 
 interface ChatMessage {
   role: "user" | "assistant";
   content: string;
+  sources?: ChatSource[];
 }
 
 export default function RepoChat({
   repoName,
+  onOpenFile,
 }: Props) {
   const [question, setQuestion] =
     useState("");
@@ -39,12 +44,14 @@ export default function RepoChat({
     });
   }, [messages, loading]);
 
-  async function askQuestion() {
-    if (!question.trim() || loading) return;
+  async function askQuestion(
+    selectedQuestion = question
+  ) {
+    if (!selectedQuestion.trim() || loading) return;
 
     const userMessage: ChatMessage = {
       role: "user",
-      content: question,
+      content: selectedQuestion,
     };
 
     setMessages((prev) => [
@@ -52,7 +59,7 @@ export default function RepoChat({
       userMessage,
     ]);
 
-    const currentQuestion = question;
+    const currentQuestion = selectedQuestion;
 
     setQuestion("");
 
@@ -74,6 +81,7 @@ export default function RepoChat({
           role: "assistant",
           content:
             response.data.answer,
+          sources: response.data.sources,
         },
       ]);
     } catch (error) {
@@ -97,6 +105,14 @@ export default function RepoChat({
       <h2 className="text-2xl font-semibold mb-4">
         Chat with Repository
       </h2>
+
+      {messages.length === 0 && (
+        <SuggestedQuestions
+          onSelect={(selectedQuestion) =>
+            askQuestion(selectedQuestion)
+          }
+        />
+      )}
 
       <div
         ref={messagesRef}
@@ -129,74 +145,13 @@ export default function RepoChat({
                   {message.content}
                 </p>
               ) : (
-                <ReactMarkdown
-                  components={{
-                    h1: ({ children }) => (
-                      <h3 className="mb-2 mt-3 text-lg font-semibold text-white first:mt-0">
-                        {children}
-                      </h3>
-                    ),
-                    h2: ({ children }) => (
-                      <h3 className="mb-2 mt-3 text-base font-semibold text-white first:mt-0">
-                        {children}
-                      </h3>
-                    ),
-                    h3: ({ children }) => (
-                      <h4 className="mb-1.5 mt-3 text-sm font-semibold text-zinc-100 first:mt-0">
-                        {children}
-                      </h4>
-                    ),
-                    p: ({ children }) => (
-                      <p className="mb-3 text-[15px] leading-7 text-zinc-200 last:mb-0">
-                        {children}
-                      </p>
-                    ),
-                    ul: ({ children }) => (
-                      <ul className="mb-3 list-disc space-y-1.5 pl-5 last:mb-0">
-                        {children}
-                      </ul>
-                    ),
-                    ol: ({ children }) => (
-                      <ol className="mb-3 list-decimal space-y-1.5 pl-5 last:mb-0">
-                        {children}
-                      </ol>
-                    ),
-                    li: ({ children }) => (
-                      <li className="text-[15px] leading-7 text-zinc-200">
-                        {children}
-                      </li>
-                    ),
-                    strong: ({ children }) => (
-                      <strong className="font-semibold text-white">
-                        {children}
-                      </strong>
-                    ),
-                    code: ({ children }) => (
-                      <code className="rounded bg-black/40 px-1.5 py-0.5 text-cyan-300">
-                        {children}
-                      </code>
-                    ),
-                    table: ({ children }) => (
-                      <div className="mb-3 overflow-x-auto rounded-xl border border-zinc-700">
-                        <table className="w-full text-left text-sm">
-                          {children}
-                        </table>
-                      </div>
-                    ),
-                    th: ({ children }) => (
-                      <th className="border-b border-zinc-700 bg-zinc-800 px-3 py-2 text-zinc-100">
-                        {children}
-                      </th>
-                    ),
-                    td: ({ children }) => (
-                      <td className="border-b border-zinc-800 px-3 py-2 text-zinc-300">
-                        {children}
-                      </td>
-                    ),
-                  }}
-                >
-                  {message.content}
-                </ReactMarkdown>
+                <>
+                  <ChatMarkdown content={message.content} />
+                  <SourceChips
+                    sources={message.sources}
+                    onOpenFile={onOpenFile}
+                  />
+                </>
               )}
             </div>
           </div>
@@ -227,7 +182,7 @@ export default function RepoChat({
         />
 
         <button
-          onClick={askQuestion}
+          onClick={() => askQuestion()}
           disabled={loading}
           className="bg-white text-black px-5 rounded-xl font-medium"
         >

@@ -206,6 +206,13 @@ function toEdge(
       : "left",
     label: edgeLabel,
     animated: strongEdge,
+    data: {
+      kind: ownershipEdge
+        ? "ownership"
+        : strongEdge
+          ? "flow"
+          : "import",
+    },
     style: {
       stroke: ownershipEdge
         ? "#52525b"

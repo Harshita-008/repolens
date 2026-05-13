@@ -58,6 +58,9 @@ export interface GraphEdge {
   label?: string;
   animated?: boolean;
   hidden?: boolean;
+  data?: {
+    kind: "flow" | "ownership" | "import";
+  };
   style?: Record<string, string | number>;
   labelStyle?: Record<string, string | number>;
   labelBgStyle?: Record<string, string | number>;
