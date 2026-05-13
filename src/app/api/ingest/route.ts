@@ -18,6 +18,9 @@ import {
   generateRoadmap,
 } from "@/lib/parser/architectureAnalyzer";
 
+export const runtime = "nodejs";
+export const maxDuration = 60;
+
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
@@ -96,11 +99,32 @@ export async function POST(req: NextRequest) {
       ...analysis,
     });
   } catch (error) {
+    const message =
+      error instanceof Error
+        ? error.message
+        : "Failed to analyze repository";
+
     console.error(error);
 
     return NextResponse.json(
-      { error: "Failed to analyze repository" },
+      { error: getClientSafeError(message) },
       { status: 500 }
     );
   }
+}
+
+function getClientSafeError(message: string) {
+  if (message.includes("OPENROUTER_API_KEY")) {
+    return "OPENROUTER_API_KEY is missing in the deployment environment.";
+  }
+
+  if (message.includes("GEMINI_API_KEY")) {
+    return "GEMINI_API_KEY is missing in the deployment environment.";
+  }
+
+  if (message.includes("Failed to clone repository")) {
+    return "Could not clone the repository. Check that the URL is public and reachable from the deployment.";
+  }
+
+  return "Failed to analyze repository. Check the repository URL, API keys, and deployment function logs.";
 }

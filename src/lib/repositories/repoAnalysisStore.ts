@@ -1,4 +1,5 @@
 import fs from "fs";
+import os from "os";
 import path from "path";
 import { analyzeRepoHealth } from "../health/analyzeRepoHealth";
 import {
@@ -6,9 +7,13 @@ import {
   AnalysisListItem,
 } from "./types";
 
-const STORE_DIR = path.join(process.cwd(), ".repolens");
+const STORE_DIR = path.join(getWritableRoot(), ".repolens");
 const STORE_FILE = path.join(STORE_DIR, "analyses.json");
 const MAX_ANALYSES = 12;
+
+function getWritableRoot() {
+  return process.env.VERCEL ? os.tmpdir() : process.cwd();
+}
 
 function ensureStore() {
   if (!fs.existsSync(STORE_DIR)) {

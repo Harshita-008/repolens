@@ -2,11 +2,16 @@ import simpleGit from "simple-git";
 import path from "path";
 import fs from "fs";
 import os from "os";
+import { fetchGithubRepo } from "./fetchGithubRepo";
 
 const git = simpleGit();
 
 export async function cloneRepo(repoUrl: string) {
   try {
+    if (process.env.VERCEL) {
+      return fetchGithubRepo(repoUrl);
+    }
+
     const repoName = repoUrl
       .split("/")
       .pop()

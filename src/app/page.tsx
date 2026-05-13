@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import axios from "axios";
+import type { AxiosError } from "axios";
 import RepoDashboard from "@/components/dashboard/RepoDashboard";
 import Sidebar from "@/components/layout/Sidebar";
 import CommandPalette from "@/components/workspace/CommandPalette";
@@ -85,9 +86,7 @@ export default function HomePage() {
       await loadSavedRepos();
     } catch (analyzeError) {
       console.error(analyzeError);
-      setError(
-        "Could not analyze this repository. Check that the URL is public and your API keys are configured."
-      );
+      setError(getRequestErrorMessage(analyzeError));
     } finally {
       setLoading(false);
     }
@@ -192,4 +191,15 @@ export default function HomePage() {
       </div>
     </main>
   );
+}
+
+function getRequestErrorMessage(error: unknown) {
+  const fallback =
+    "Could not analyze this repository. Check that the URL is public and your API keys are configured.";
+
+  if (!axios.isAxiosError(error)) return fallback;
+
+  const axiosError = error as AxiosError<{ error?: string }>;
+
+  return axiosError.response?.data?.error || fallback;
 }
