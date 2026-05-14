@@ -99,6 +99,20 @@ export default function RepoLaunchPanel({
     >
       <div className="grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
         <div>
+          <div className="mb-5 flex items-center gap-3 lg:hidden">
+            <div className="grid h-11 w-11 shrink-0 place-items-center rounded-lg border border-cyan-400/30 bg-cyan-400/10 text-cyan-300">
+              <FolderGit2 size={19} />
+            </div>
+            <div className="min-w-0">
+              <div className="text-2xl font-semibold tracking-tight text-white">
+                RepoLENS
+              </div>
+              <div className="truncate text-xs leading-5 text-zinc-500">
+                AI repository intelligence workspace
+              </div>
+            </div>
+          </div>
+
           <div className="mb-4 inline-flex items-center gap-2 rounded-lg border border-zinc-800 bg-black px-3 py-2 text-xs font-medium text-zinc-300">
             <FolderGit2 size={14} className="text-cyan-300" />
             Repository intelligence workspace
