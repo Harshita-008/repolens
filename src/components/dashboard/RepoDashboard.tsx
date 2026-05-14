@@ -47,7 +47,7 @@ export default function RepoDashboard({
               <button
                 key={repo.repoName}
                 onClick={() => onOpenRepo(repo.repoName)}
-                className={`rounded-lg border p-4 text-left transition ${
+                className={`flex min-h-[138px] flex-col rounded-lg border p-4 text-left transition ${
                   activeRepoName === repo.repoName
                     ? "border-cyan-400 bg-cyan-400/10"
                     : "border-zinc-800 bg-black/30 hover:border-zinc-600 hover:bg-black/50"
@@ -82,18 +82,22 @@ export default function RepoDashboard({
                   </span>
                 </div>
 
-                {repo.topRisks.length > 0 && (
-                  <div className="mt-3 flex flex-wrap gap-2">
-                    {repo.topRisks.map((risk, index) => (
-                      <span
-                        key={`${risk}-${index}`}
-                        className="rounded-md border border-amber-500/30 bg-amber-500/10 px-2 py-1 text-xs text-amber-200"
-                      >
-                        {risk}
-                      </span>
-                    ))}
-                  </div>
-                )}
+                <div className="mt-auto pt-2">
+                  {repo.topRisks.length > 0 ? (
+                    <div className="flex min-h-[28px] flex-wrap gap-2">
+                      {repo.topRisks.map((risk, index) => (
+                        <span
+                          key={`${risk}-${index}`}
+                          className="rounded-md border border-amber-500/30 bg-amber-500/10 px-2 py-1 text-xs text-amber-200"
+                        >
+                          {risk}
+                        </span>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="min-h-[28px]" />
+                  )}
+                </div>
 
                 {loadingRepoName === repo.repoName && (
                   <div className="mt-3 text-xs text-cyan-300">
