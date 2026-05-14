@@ -40,6 +40,11 @@ export async function cloneRepo(repoUrl: string) {
     };
   } catch (error) {
     console.error(error);
+
+    if (process.env.VERCEL && error instanceof Error) {
+      throw error;
+    }
+
     throw new Error("Failed to clone repository");
   }
 }

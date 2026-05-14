@@ -64,7 +64,13 @@ export async function fetchGithubRepo(repoUrl: string) {
     .slice(0, MAX_CONTENT_FILES);
 
   materializeSignalFiles(repoPath, treeFiles);
-  await materializeContentFiles(repoPath, contentFiles);
+  await materializeContentFiles(
+    repoPath,
+    contentFiles,
+    owner,
+    repo,
+    defaultBranch
+  );
 
   return {
     repoName: repo,
@@ -93,10 +99,7 @@ function parseGithubRepoUrl(repoUrl: string) {
 
 async function fetchJson<T>(url: string): Promise<T> {
   const response = await fetch(url, {
-    headers: {
-      Accept: "application/vnd.github+json",
-      "User-Agent": "RepoLens",
-    },
+    headers: getGithubHeaders(),
   });
 
   if (!response.ok) {
@@ -106,6 +109,22 @@ async function fetchJson<T>(url: string): Promise<T> {
   }
 
   return response.json() as Promise<T>;
+}
+
+async function fetchText(url: string) {
+  const response = await fetch(url, {
+    headers: {
+      "User-Agent": "RepoLens",
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error(
+      `GitHub content request failed with ${response.status} ${response.statusText}.`
+    );
+  }
+
+  return response.text();
 }
 
 function materializeSignalFiles(
@@ -119,22 +138,48 @@ function materializeSignalFiles(
 
 async function materializeContentFiles(
   repoPath: string,
-  files: GithubTreeItem[]
+  files: GithubTreeItem[],
+  owner: string,
+  repo: string,
+  branch: string
 ) {
   for (const file of files) {
-    const blob = await fetchJson<{
-      content: string;
-      encoding: string;
-    }>(file.url);
-
-    if (blob.encoding !== "base64") continue;
-
     writeFile(
       repoPath,
       file.path,
-      Buffer.from(blob.content, "base64").toString("utf-8")
+      await fetchText(buildRawFileUrl(owner, repo, branch, file.path))
     );
   }
+}
+
+function getGithubHeaders() {
+  const headers: Record<string, string> = {
+    Accept: "application/vnd.github+json",
+    "User-Agent": "RepoLens",
+  };
+  const token = process.env.GITHUB_TOKEN;
+
+  if (token) {
+    headers.Authorization = `Bearer ${token}`;
+  }
+
+  return headers;
+}
+
+function buildRawFileUrl(
+  owner: string,
+  repo: string,
+  branch: string,
+  filePath: string
+) {
+  const encodedPath = filePath
+    .split("/")
+    .map(encodeURIComponent)
+    .join("/");
+
+  return `https://raw.githubusercontent.com/${owner}/${repo}/${encodeURIComponent(
+    branch
+  )}/${encodedPath}`;
 }
 
 function writeFile(

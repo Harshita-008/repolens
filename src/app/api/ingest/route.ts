@@ -126,5 +126,9 @@ function getClientSafeError(message: string) {
     return "Could not clone the repository. Check that the URL is public and reachable from the deployment.";
   }
 
+  if (message.includes("rate limit")) {
+    return "GitHub rate limit was reached. Add GITHUB_TOKEN in the deployment environment or try again later.";
+  }
+
   return "Failed to analyze repository. Check the repository URL, API keys, and deployment function logs.";
 }
