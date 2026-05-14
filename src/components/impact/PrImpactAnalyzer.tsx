@@ -123,7 +123,7 @@ export default function PrImpactAnalyzer({ repoName }: Props) {
               value={diff}
               onChange={(event) => setDiff(event.target.value)}
               placeholder="Paste a git diff here..."
-              className="h-[360px] w-full resize-y bg-black p-4 font-mono text-sm leading-6 text-zinc-200 outline-none placeholder:text-zinc-600"
+              className="h-[260px] w-full resize-y bg-black p-4 font-mono text-sm leading-6 text-zinc-200 outline-none placeholder:text-zinc-600 md:h-[360px]"
             />
           </div>
 
@@ -153,9 +153,9 @@ export default function PrImpactAnalyzer({ repoName }: Props) {
           </button>
         </div>
 
-        <div className="min-h-[480px] space-y-4">
+        <div className="min-h-[320px] space-y-4 md:min-h-[480px]">
           {!report ? (
-            <div className="grid h-full min-h-[480px] place-items-center rounded-lg border border-dashed border-zinc-800 bg-black/30 p-8 text-center">
+            <div className="grid h-full min-h-[320px] place-items-center rounded-lg border border-dashed border-zinc-800 bg-black/30 p-6 text-center md:min-h-[480px] md:p-8">
               <div>
                 <ShieldAlert className="mx-auto mb-3 text-zinc-600" />
                 <h3 className="font-medium text-zinc-200">

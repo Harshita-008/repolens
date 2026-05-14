@@ -24,7 +24,7 @@ export default function RepoHeader({
   return (
     <div className="border-b border-zinc-900 bg-black py-3">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="min-w-0">
+        <div className="min-w-0 flex-1 basis-full lg:basis-auto">
           <div className="flex flex-wrap items-center gap-2">
             <h2 className="truncate text-lg font-semibold text-white">
               {data.repoName}
@@ -43,7 +43,7 @@ export default function RepoHeader({
                 href={data.repoUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex max-w-[420px] items-center gap-1 truncate transition hover:text-cyan-300"
+                className="inline-flex max-w-full items-center gap-1 truncate transition hover:text-cyan-300 sm:max-w-[420px]"
               >
                 <ExternalLink size={13} />
                 <span className="truncate">{data.repoUrl}</span>
@@ -57,7 +57,7 @@ export default function RepoHeader({
           </div>
         </div>
 
-        <div className="flex flex-wrap items-center gap-2">
+        <div className="flex w-full flex-wrap items-center gap-2 sm:w-auto">
           <HeaderStat
             icon={ShieldCheck}
             label="Health"
@@ -76,7 +76,7 @@ export default function RepoHeader({
           <button
             onClick={onReanalyze}
             disabled={loading}
-            className="inline-flex h-10 items-center gap-2 rounded-lg border border-zinc-800 bg-zinc-950 px-3 text-sm text-zinc-200 transition hover:border-zinc-600 disabled:cursor-not-allowed disabled:opacity-50"
+            className="inline-flex h-10 w-full items-center justify-center gap-2 rounded-lg border border-zinc-800 bg-zinc-950 px-3 text-sm text-zinc-200 transition hover:border-zinc-600 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
           >
             <RefreshCw
               size={15}

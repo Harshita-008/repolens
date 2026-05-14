@@ -143,6 +143,37 @@ export default function Sidebar({
   }, []);
 
   return (
+    <>
+    <header className="sticky top-0 z-50 border-b border-zinc-800 bg-zinc-950/95 px-4 py-3 backdrop-blur-xl lg:hidden">
+      <div className="flex items-center justify-between gap-3">
+        <div className="min-w-0">
+          <div className="text-lg font-semibold tracking-tight text-white">
+            RepoLENS
+          </div>
+          <div className="truncate text-xs text-zinc-500">
+            Repository intelligence workspace
+          </div>
+        </div>
+
+        <button
+          onClick={() => {
+            if (!hasActiveRepo) return;
+            window.dispatchEvent(
+              new KeyboardEvent("keydown", {
+                key: "k",
+                ctrlKey: true,
+              })
+            );
+          }}
+          disabled={!hasActiveRepo}
+          className="inline-flex shrink-0 items-center gap-2 rounded-lg border border-zinc-800 bg-black px-3 py-2 text-xs text-zinc-300 transition hover:border-zinc-600 hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          <Search size={14} />
+          Ctrl K
+        </button>
+      </div>
+    </header>
+
     <aside className="fixed left-0 top-0 z-40 hidden h-screen w-[280px] border-r border-zinc-800 bg-zinc-950/95 p-4 backdrop-blur-xl lg:block">
       <div className="mb-5 rounded-xl border border-zinc-800 bg-black/40 p-4">
         <h1 className="text-2xl font-semibold tracking-tight text-white">
@@ -234,6 +265,7 @@ export default function Sidebar({
           })}
       </nav>
     </aside>
+    </>
   );
 }
 

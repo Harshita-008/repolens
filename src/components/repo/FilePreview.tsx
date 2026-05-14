@@ -51,7 +51,7 @@ export default function FilePreview({
 
   return (
     <div className="rounded-xl border border-zinc-800 bg-zinc-950/70">
-      <div className="flex items-start justify-between gap-4 border-b border-zinc-800 px-5 py-4">
+      <div className="flex flex-wrap items-start justify-between gap-4 border-b border-zinc-800 px-5 py-4">
         <div className="flex items-start gap-3">
           <div className="grid h-9 w-9 place-items-center rounded-lg border border-zinc-800 bg-black text-cyan-300">
             <FileCode2 size={17} />
@@ -87,7 +87,7 @@ export default function FilePreview({
             />
           </div>
 
-          <div className="max-h-[460px] space-y-2 overflow-y-auto pr-1 custom-scrollbar">
+          <div className="max-h-[300px] space-y-2 overflow-y-auto pr-1 custom-scrollbar lg:max-h-[460px]">
             {filteredFiles.map((file) => (
               <button
                 key={file.path}
@@ -148,7 +148,7 @@ export default function FilePreview({
             wrapLongLines
             customStyle={{
               margin: 0,
-              height: "460px",
+              height: "min(460px, 65vh)",
               background: "#09090b",
               fontSize: "13px",
             }}

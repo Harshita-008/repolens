@@ -58,13 +58,13 @@ export default function RepoLaunchPanel({
               onRepoUrlChange(event.target.value)
             }
             placeholder="Paste GitHub repository URL..."
-            className="min-h-11 flex-1 rounded-lg border border-zinc-800 bg-black px-4 text-sm text-zinc-100 outline-none transition placeholder:text-zinc-600 focus:border-cyan-400"
+            className="min-h-11 w-full flex-1 rounded-lg border border-zinc-800 bg-black px-4 text-sm text-zinc-100 outline-none transition placeholder:text-zinc-600 focus:border-cyan-400"
           />
 
           <button
             onClick={onAnalyze}
             disabled={loading || !repoUrl.trim()}
-            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-white px-4 text-sm font-semibold text-black transition hover:bg-zinc-200 disabled:cursor-not-allowed disabled:opacity-50"
+            className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg bg-white px-4 text-sm font-semibold text-black transition hover:bg-zinc-200 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
           >
             {loading ? (
               <>
@@ -121,13 +121,13 @@ export default function RepoLaunchPanel({
                 onRepoUrlChange(event.target.value)
               }
               placeholder="Paste GitHub repository URL..."
-              className="min-h-12 flex-1 rounded-lg border border-zinc-800 bg-black px-4 text-sm text-zinc-100 outline-none transition placeholder:text-zinc-600 focus:border-cyan-400"
+              className="min-h-12 w-full flex-1 rounded-lg border border-zinc-800 bg-black px-4 text-sm text-zinc-100 outline-none transition placeholder:text-zinc-600 focus:border-cyan-400"
             />
 
             <button
               onClick={onAnalyze}
               disabled={loading || !repoUrl.trim()}
-              className="inline-flex min-h-12 items-center justify-center gap-2 rounded-lg bg-white px-5 text-sm font-semibold text-black transition hover:bg-zinc-200 disabled:cursor-not-allowed disabled:opacity-50"
+              className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-lg bg-white px-5 text-sm font-semibold text-black transition hover:bg-zinc-200 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
             >
               {loading ? (
                 <>
