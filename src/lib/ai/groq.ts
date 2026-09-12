@@ -43,7 +43,15 @@ export async function createCompletion(
   options: { timeout?: number } = {}
 ): Promise<string | null> {
   const completion = await getGroqClient().chat.completions.create(
-    { model: GROQ_MODEL, ...body },
+    {
+      model: GROQ_MODEL,
+      // gpt-oss models reason before answering, and those hidden reasoning
+      // tokens are drawn from the same max_tokens budget as the reply. Left
+      // at the default effort they can swallow the whole budget and return
+      // empty content, so keep reasoning minimal for these doc-style prompts.
+      reasoning_effort: "low",
+      ...body,
+    },
     { timeout: options.timeout ?? 20000 }
   );
 

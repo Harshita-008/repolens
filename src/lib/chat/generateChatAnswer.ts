@@ -7,7 +7,7 @@ export async function generateChatAnswer(
   try {
     const content = await createCompletion({
       temperature: 0.2,
-      max_tokens: 800,
+      max_tokens: 2000,
       messages: [
         {
           role: "system",

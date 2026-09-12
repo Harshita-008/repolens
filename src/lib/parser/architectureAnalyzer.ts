@@ -101,7 +101,7 @@ SPACING RULES:
   try {
     const content = await createCompletion({
         temperature: 0.3,
-        max_tokens: 400,
+        max_tokens: 2000,
 
       messages: [
         {
@@ -170,7 +170,7 @@ SPACING RULES:
   try {
     const content = await createCompletion({
         temperature: 0.3,
-        max_tokens: 400,
+        max_tokens: 2000,
 
       messages: [
         {
@@ -280,7 +280,7 @@ SPACING RULES:
   try {
     const content = await createCompletion({
         temperature: 0.3,
-        max_tokens: 500,
+        max_tokens: 2000,
 
       messages: [
         {
