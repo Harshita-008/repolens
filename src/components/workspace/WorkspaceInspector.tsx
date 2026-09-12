@@ -101,7 +101,6 @@ export default function WorkspaceInspector({
               ["Review architecture", "architecture"],
               ["Check health findings", "health"],
               ["Analyze a diff", "impact"],
-              ["Ask repo chat", "chat"],
               ["Inspect files", "files"],
             ].map(([label, id]) => {
               const view = id as WorkspaceView;
@@ -138,10 +137,6 @@ function getViewDetail(
 
   if (activeView === "impact") {
     return "Paste a diff or GitHub PR URL for review focus";
-  }
-
-  if (activeView === "chat") {
-    return "Ask grounded questions with repo citations";
   }
 
   if (activeView === "files") {

@@ -10,7 +10,6 @@ import {
   GitPullRequest,
   LayoutDashboard,
   Map,
-  MessageSquare,
   Network,
   Search,
   ShieldCheck,
@@ -72,12 +71,6 @@ const items = [
     label: "PR Impact",
     id: "impact",
     view: "impact",
-  },
-  {
-    icon: MessageSquare,
-    label: "Chat",
-    id: "chat",
-    view: "chat",
   },
   {
     icon: Files,
@@ -274,7 +267,6 @@ function getPrimaryLabelForView(view: WorkspaceView) {
   if (view === "architecture") return "Architecture";
   if (view === "health") return "Health";
   if (view === "impact") return "PR Impact";
-  if (view === "chat") return "Chat";
   if (view === "files") return "Files";
   return "Roadmap";
 }

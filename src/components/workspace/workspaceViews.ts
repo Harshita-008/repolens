@@ -3,7 +3,6 @@ import {
   FileCode2,
   GitPullRequest,
   Map,
-  MessageSquare,
   Network,
   ShieldCheck,
   type LucideIcon,
@@ -14,7 +13,6 @@ export type WorkspaceView =
   | "architecture"
   | "health"
   | "impact"
-  | "chat"
   | "files"
   | "roadmap";
 
@@ -29,7 +27,6 @@ export const workspaceViews: WorkspaceViewItem[] = [
   { label: "Architecture", id: "architecture", icon: Network },
   { label: "Health", id: "health", icon: ShieldCheck },
   { label: "PR Impact", id: "impact", icon: GitPullRequest },
-  { label: "Chat", id: "chat", icon: MessageSquare },
   { label: "Files", id: "files", icon: FileCode2 },
   { label: "Roadmap", id: "roadmap", icon: Map },
 ];

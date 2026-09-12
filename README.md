@@ -1,6 +1,6 @@
 # RepoLens
 
-RepoLens is an AI-powered repository intelligence workspace for understanding unfamiliar codebases faster. Paste a public GitHub repository URL and RepoLens generates a structured engineering view of the project: architecture, onboarding guidance, health signals, test gaps, file exploration, repo chat, and PR/diff impact analysis.
+RepoLens is an AI-powered repository intelligence workspace for understanding unfamiliar codebases faster. Paste a public GitHub repository URL and RepoLens generates a structured engineering view of the project: architecture, onboarding guidance, health signals, test gaps, file exploration, and PR/diff impact analysis.
 
 Live app: [https://repolens-six.vercel.app/](https://repolens-six.vercel.app/)
 
@@ -16,13 +16,12 @@ RepoLens turns that first-pass exploration into a focused workspace. It helps de
 - What are the main health and readiness gaps?
 - Which files are risky or important?
 - What should reviewers focus on in a PR?
-- Can I ask repo-specific questions without manually searching everything?
 
 ## Features
 
 ### Repository Intelligence Workspace
 
-Analyze a public GitHub repository and get a complete workspace with summary, architecture, health, files, roadmap, chat, and PR impact sections.
+Analyze a public GitHub repository and get a complete workspace with summary, architecture, health, files, roadmap, and PR impact sections.
 
 ### AI Repository Summary
 
@@ -55,10 +54,6 @@ Finds important source files that do not appear to have nearby test coverage and
 ### PR / Diff Impact Analyzer
 
 Paste a unified git diff or provide a GitHub PR URL to identify changed files, risk level, affected modules, suggested tests, and review focus.
-
-### Repo Chat
-
-Ask questions about the analyzed repository. RepoLens answers using stored repository context such as tree, summary, roadmap, and scanned file chunks.
 
 ### File Search and Preview
 
@@ -105,7 +100,7 @@ Architecture, structure, dependency, health, and important-file analyzers
 AI summary + read-first guide + roadmap generation
         |
         v
-Saved analysis + repo chat context
+Saved analysis + repository context
         |
         v
 Workspace UI renders insights
@@ -127,7 +122,7 @@ The health report is deterministic rather than AI-generated. It checks concrete 
 
 ### AI Usage
 
-AI is used where synthesis is valuable: repository summary, read-first guidance, roadmap generation, and repo chat. Deterministic checks such as health scoring and test-gap detection are kept rule-based to reduce cost and improve consistency.
+AI is used where synthesis is valuable: repository summary, read-first guidance, and roadmap generation. Deterministic checks such as health scoring and test-gap detection are kept rule-based to reduce cost and improve consistency.
 
 ### Saved Analysis Storage
 
@@ -144,7 +139,6 @@ src/
   app/
     api/
       ingest/          Main repository analysis endpoint
-      chat/            Repository chat endpoint
       pr-impact/       PR and unified diff impact analyzer
       repos/           Saved analysis list and lookup endpoints
       roadmap/         Roadmap-related API route
@@ -153,7 +147,6 @@ src/
     icon.svg           RepoLens favicon
 
   components/
-    chat/              Repository chat UI
     dashboard/         Saved workspace dashboard
     health/            Repository health report
     impact/            PR / diff analyzer UI
@@ -165,7 +158,7 @@ src/
 
   lib/
     ai/                AI provider clients
-    chat/              Chat prompt and repo context utilities
+    chat/              Repo context and prompt utilities
     diff/              Diff parsing and PR diff fetching
     git/               Repository fetch, clone, scan, and tree utilities
     health/            Repository health analysis

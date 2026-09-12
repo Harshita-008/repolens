@@ -12,7 +12,6 @@ import DependencyHeatmap from "@/components/DependencyHeatmap";
 import ExportDocsPanel from "@/components/docs/ExportDocsPanel";
 import FilePreview from "@/components/repo/FilePreview";
 import PrImpactAnalyzer from "@/components/impact/PrImpactAnalyzer";
-import RepoChat from "@/components/chat/RepoChat";
 import RepoDashboard from "@/components/dashboard/RepoDashboard";
 import RepoHealthReport from "@/components/health/RepoHealthReport";
 import RepoCodeSearch from "@/components/search/RepoCodeSearch";
@@ -139,17 +138,6 @@ export default function WorkspaceViewContent({
 
   if (view === "impact") {
     return <PrImpactAnalyzer repoName={data.repoName} />;
-  }
-
-  if (view === "chat") {
-    return (
-      <section id="chat" className="scroll-mt-28">
-        <RepoChat
-          repoName={data.repoName}
-          onOpenFile={onOpenFile}
-        />
-      </section>
-    );
   }
 
   if (view === "files") {
