@@ -20,3 +20,6 @@ export function getOpenRouterClient() {
 
   return client;
 }
+
+export const OPENROUTER_MODEL =
+  process.env.OPENROUTER_MODEL ?? "nvidia/nemotron-3-super-120b-a12b:free";

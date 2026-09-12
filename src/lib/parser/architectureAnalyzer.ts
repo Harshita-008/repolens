@@ -1,4 +1,4 @@
-import { getOpenRouterClient } from "../ai/openrouter";
+import { getOpenRouterClient, OPENROUTER_MODEL } from "../ai/openrouter";
 import { RepoFile } from "../git/fileScanner";
 
 function buildImportantFilesContext(
@@ -100,8 +100,7 @@ SPACING RULES:
 
   const completion =
     await getOpenRouterClient().chat.completions.create({
-        model:
-          "openai/gpt-oss-20b:free",
+        model: OPENROUTER_MODEL,
         temperature: 0.3,
         max_tokens: 400,
 
@@ -170,8 +169,7 @@ SPACING RULES:
 `;
   const completion =
     await getOpenRouterClient().chat.completions.create({
-        model:
-          "openai/gpt-oss-20b:free",
+        model: OPENROUTER_MODEL,
         temperature: 0.3,
         max_tokens: 400,
 
@@ -281,8 +279,7 @@ SPACING RULES:
 
   const completion =
     await getOpenRouterClient().chat.completions.create({
-        model:
-          "openai/gpt-oss-20b:free",
+        model: OPENROUTER_MODEL,
         temperature: 0.3,
         max_tokens: 500,
 
