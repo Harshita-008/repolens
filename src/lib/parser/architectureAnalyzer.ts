@@ -1,4 +1,4 @@
-import { getOpenRouterClient, OPENROUTER_MODEL } from "../ai/openrouter";
+import { createCompletion } from "../ai/groq";
 import { RepoFile } from "../git/fileScanner";
 
 function buildImportantFilesContext(
@@ -98,9 +98,8 @@ SPACING RULES:
 - Keep sections compact
 `;
 
-  const completion =
-    await getOpenRouterClient().chat.completions.create({
-        model: OPENROUTER_MODEL,
+  try {
+    const content = await createCompletion({
         temperature: 0.3,
         max_tokens: 400,
 
@@ -118,10 +117,11 @@ SPACING RULES:
       timeout: 20000,
     });
 
-  return (
-    completion.choices[0].message.content ||
-    "Failed to generate summary."
-  );
+    return content || "Failed to generate summary.";
+  } catch (error) {
+    console.error(error);
+    return "Failed to generate summary.";
+  }
 }
 
 export async function generateReadFirst(
@@ -167,9 +167,8 @@ SPACING RULES:
 - Do NOT leave empty lines inside the same file section
 - Keep output compact and highly readable
 `;
-  const completion =
-    await getOpenRouterClient().chat.completions.create({
-        model: OPENROUTER_MODEL,
+  try {
+    const content = await createCompletion({
         temperature: 0.3,
         max_tokens: 400,
 
@@ -187,10 +186,11 @@ SPACING RULES:
       timeout: 20000,
     });
 
-  return (
-    completion.choices[0].message.content ||
-    "Failed to generate."
-  );
+    return content || "Failed to generate.";
+  } catch (error) {
+    console.error(error);
+    return "Failed to generate.";
+  }
 }
 
 export async function generateRoadmap(
@@ -277,9 +277,8 @@ SPACING RULES:
 - Keep output compact and structured
 `;
 
-  const completion =
-    await getOpenRouterClient().chat.completions.create({
-        model: OPENROUTER_MODEL,
+  try {
+    const content = await createCompletion({
         temperature: 0.3,
         max_tokens: 500,
 
@@ -297,8 +296,9 @@ SPACING RULES:
       timeout: 20000,
     });
 
-  return (
-    completion.choices[0].message.content ||
-    "Failed to generate roadmap."
-  );
+    return content || "Failed to generate roadmap.";
+  } catch (error) {
+    console.error(error);
+    return "Failed to generate roadmap.";
+  }
 }

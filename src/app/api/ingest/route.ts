@@ -114,8 +114,8 @@ export async function POST(req: NextRequest) {
 }
 
 function getClientSafeError(message: string) {
-  if (message.includes("OPENROUTER_API_KEY")) {
-    return "OPENROUTER_API_KEY is missing in the deployment environment.";
+  if (message.includes("GROQ_API_KEY")) {
+    return "GROQ_API_KEY is missing in the deployment environment.";
   }
 
   if (message.includes("GEMINI_API_KEY")) {
